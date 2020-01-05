@@ -257,7 +257,7 @@ Returns the list of Loans for the User with the specified `userID`.
 POST http://127.0.0.1/users/1/loans
 ```
 
-**POST /:userID/loans/:bookID**
+**POST /users/:userID/loans/:bookID**
 
 Creates or Updates a Loan for the User with the specified `userID` and the Book with the specified `bookID`. Fields to be added to or updated in the Loan should be included in the body of the POST request
 
