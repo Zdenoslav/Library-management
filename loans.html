@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
+    <title>Loans</title>
+</head>
+<h1 class="display-4 text-center">LOANS</h1>
+
+<body>
+    <form class="" action="index.html" method="post">
+        <input id='loan' type="text" name="" value="">
+    </form>
+
+    <script>
+        function LoanSubmit() {
+            e.preventDefault();
+            const loan = document.getElementById('loan').value;
+
+
+        const new_loan = {
+            dueDate:
+        };
+
+        const addBook = new XMLHttpRequest();
+
+        addBook.open('POST', base_url + '/books');
+        addBook.setRequestHeader("Content-Type", "application/json");
+        addBook.send(JSON.stringify(new_book));
+        addBook.addEventListener('load', function() {
+                    console.log(this.response);
+
+        }
+        
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
+    <title>Books</title>
+</head>
+
+<body>
+    <h1 class="display-4 text-center">BOOKS</h1>
+    <div class="container">
+        <form id="libraryForm" action="index.html" method="post">
+            <div class="form-group">
+                <label for="name">Title</label>
+                <input type="text" id="title" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="author">ISBN</label>
+                <input type="text" id="isbn" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="isbn">Author</label>
+                <input type="text" id="name" class="form-control">
+            </div>
+
+
+            <input type="submit" value="Add Book" class="btn btn-primary btn-block">
+
+            <div class="">
+                <label for="">SEARCH BY TITLE</label>
+                <input type="text" id='searchTitle' placeholder="Search for title" class="input mt-4" oninput="searchTitles()">
+            </div>
+            <div class="">
+                <label for="">SEARCH BY AUTHOR</label>
+                <input type="text" id='searchAuthor' placeholder="Search for author" class="input mt-4" oninput="searchAuthors()">
+            </div>
+        </form>
+    </div>
+    <table class="table table-striped mt-5" id='myTable'>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>ISBN</th>
+                <th>Author</th>
+                <th>UPDATE</th>
+                <th>DELETE</th>
+            </tr>
+        </thead>
+        <tbody id="book-list"></tbody>
+    </table>
+
+    <script>
+        // the URI for our local node Library Server
+        const base_url = "http://127.0.0.1:3000";
+
+        const libraryForm = document.getElementById('libraryForm');
+        libraryForm.addEventListener('submit', libraryFormSubmit);
+
+        function libraryFormSubmit(e) {
+            e.preventDefault();
+            console.log('you have submitted')
+            const title = document.getElementById('title').value;
+            const isbn = document.getElementById('isbn').value;
+            const name = document.getElementById('name').value;
+
+
+            const new_book = {
+                title: title,
+                isbn: isbn,
+            };
+
+            const addBook = new XMLHttpRequest();
+
+            addBook.open('POST', base_url + '/books');
+            addBook.setRequestHeader("Content-Type", "application/json");
+            addBook.send(JSON.stringify(new_book));
+            addBook.addEventListener('load', function() {
+                console.log(this.response);
+
+                const new_author = {
+                    name: name,
+                };
+
+                const addAuthor = new XMLHttpRequest();
+
+                addAuthor.open('POST', base_url + '/books/' + JSON.parse(this.response).id + '/authors');
+                addAuthor.setRequestHeader("Content-Type", "application/json");
+                addAuthor.send(JSON.stringify(new_author));
+                addAuthor.addEventListener('load', function() {
+                    getAllBooks();
+                });
+            });
+
+        }
+
+        function getAllBooks() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open('GET', base_url + "/books" + '?allEntities=true');
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                updateBookTable(JSON.parse(this.response))
+            });
+        }
+
+        function updateBookTable(books) {
+            const bookTable = document.getElementById('book-list');
+            bookTable.innerHTML = "";
+            books.forEach(function(book) {
+
+                const row = bookTable.insertRow();
+                const titleCol = row.insertCell(0)
+                const isbnCol = row.insertCell(1)
+                const authorCol = row.insertCell(2)
+                const updateCol = row.insertCell(3)
+                const deleteCol = row.insertCell(4)
+
+                console.log(book);
+
+                const btn2 = document.createElement("BUTTON");
+                btn2.onclick = function() {
+                    deleteBook(book.id);
+                }
+                // Create a <button> element
+                btn2.innerHTML = "DELETE"; // Insert text
+
+                const inputName = document.createElement('INPUT');
+                inputName.setAttribute("type", "text");
+                inputName.value = book.title;
+
+                const inputName2 = document.createElement('INPUT');
+                inputName2.setAttribute("type", "text");
+                inputName2.value = book.isbn;
+
+                const inputName3 = document.createElement('INPUT');
+                inputName3.setAttribute("type", "text");
+                if (book.Authors&&book.Authors.length>0) {
+                    inputName3.value = book.Authors[0].name;
+                } else {
+                    inputName3.value = "";
+                };
+
+
+                const btn = document.createElement("BUTTON"); // Create a <button> element
+                btn.innerHTML = "UPDATE";
+                btn.onclick = function() {
+                    console.log(inputName.value)
+                    console.log(book.id)
+                    updateBook(book.id, inputName.value, inputName2.value, inputName3.value);
+                }
+
+                titleCol.appendChild(inputName);
+                isbnCol.appendChild(inputName2);
+                authorCol.appendChild(inputName3);
+                updateCol.appendChild(btn);
+                deleteCol.appendChild(btn2);
+                bookTable.appendChild(row);
+            });
+        }
+
+        function deleteBook(id) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open('DELETE', base_url + "/books/" + id);
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                getAllBooks();
+            });
+        }
+
+        function updateBook(id, title, isbn) {
+            const update_book = {
+                title: title,
+                isbn: isbn,
+            };
+
+            const xhttp = new XMLHttpRequest();
+            xhttp.open('PUT', base_url + "/books/" + id);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send(JSON.stringify(update_book));
+            xhttp.addEventListener('load', function() {});
+
+        }
+
+
+
+
+        //SEARCH
+
+        function searchTitles() {
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open('GET', base_url + "/search?type=book&title=" + document.getElementById('searchTitle').value);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                console.log(this.response)
+                updateBookTable(JSON.parse(this.response));
+            });
+        }
+
+        function searchAuthors() {
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open('GET', base_url + "/search?type=author&name=" + document.getElementById('searchAuthor').value);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                console.log(this.response)
+                const parsedAuthors = JSON.parse(this.response);
+                if(parsedAuthors && parsedAuthors.length) {
+                    const books = parsedAuthors.reduce((allBooks, author) => {
+                        const booksByAuthor = author.Books.reduce((acc, book) => {
+                            acc.push({
+                                id: book.id,
+                                title: book.title,
+                                isbn: book.isbn,
+                                createdAt: book.createdAt,
+                                updatedAt: book.updatedAt,
+                                Authors: [
+                                    author
+                                ]
+                            });
+                            return acc;
+                        }, []);
+
+                        return [...allBooks, ...booksByAuthor];
+                    }, []);
+
+                    updateBookTable(books);
+                }
+            });
+        }
+
+        getAllBooks();
+    </script>
+</body>
+
+</html>

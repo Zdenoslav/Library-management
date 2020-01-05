@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
+    <title>Library</title>
+</head>
+
+<body>
+    <h1 class="display-4 text-center">LIBRARY</h1>
+    <div class="container">
+        <form id="libraryForm" action="index.html" method="post">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="author">Barcode</label>
+                <input type="text" id="isbn" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="isbn">Member Type</label>
+                <input type="text" id="member" class="form-control">
+            </div>
+
+            <input type="submit" value="Add User" class="btn btn-primary btn-block">
+            <div class="">
+                <label for="">SEARCH</label>
+                <input type="text" id='searchName' placeholder="Search for name"class="input mt-4" oninput="searchUsers()">
+                <label for="">BARCODE</label>
+                <input type="text" id='searchBarcode' placeholder="Search for barcode"class="input mt-4" oninput="searchBarcodes()">
+
+            </div>
+        </form>
+    </div>
+    <table class="table table-striped mt-5" id='myTable'>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Barcode</th>
+                <th>Type</th>
+                <th>UPDATE</th>
+                <th>DELETE</th>
+            </tr>
+        </thead>
+        <tbody id="book-list"></tbody>
+    </table>
+
+    <script>
+        // the URI for our local node Library Server
+        const base_url = "http://127.0.0.1:3000";
+
+        let libraryForm = document.getElementById('libraryForm');
+        libraryForm.addEventListener('submit', libraryFormSubmit);
+
+        function libraryFormSubmit(e) {
+            e.preventDefault();
+            console.log('you have submitted')
+            var name = document.getElementById('name').value;
+            var isbn = document.getElementById('isbn').value;
+            var type = document.getElementById('member').value;
+
+            let new_user = {
+                name: name,
+                barcode: isbn,
+                memberType: type,
+            };
+
+            var adding = new XMLHttpRequest();
+
+            adding.open('POST', base_url + '/users');
+            adding.setRequestHeader("Content-Type", "application/json")
+            adding.send(JSON.stringify(new_user));
+            adding.addEventListener('load', function() {
+                getAllUsers();
+                console.log('done');
+            });
+        }
+
+        function getAllUsers() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open('GET', base_url + "/users");
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                updateUserTable(JSON.parse(this.response))
+            });
+        }
+
+        function updateUserTable(users) {
+            var userTable = document.getElementById('book-list');
+            userTable.innerHTML = "";
+            console.log({users});
+            users.forEach(function(user) {
+
+                var row = userTable.insertRow();
+                var nameCol = row.insertCell(0)
+                var barcodeCol = row.insertCell(1)
+                var typeCol = row.insertCell(2)
+                var updateCol = row.insertCell(3)
+                var deleteCol = row.insertCell(4)
+
+                var btn2 = document.createElement("BUTTON");
+                btn2.onclick = function() {
+                    deleteUser(user.id);
+                }
+                // Create a <button> element
+                btn2.innerHTML = "DELETE"; // Insert text
+
+                var inputName = document.createElement('INPUT');
+                inputName.setAttribute("type", "text");
+                console.log({user})
+                inputName.value = user.name;
+
+                var inputName2 = document.createElement('INPUT');
+                inputName2.setAttribute("type", "text");
+                inputName2.value = user.barcode;
+
+                var inputName3 = document.createElement('INPUT');
+                inputName3.setAttribute("type", "text");
+                inputName3.value = user.memberType;
+
+                var btn = document.createElement("BUTTON"); // Create a <button> element
+                btn.innerHTML = "UPDATE";
+                btn.onclick = function() {
+                    console.log(inputName.value)
+                    console.log(user.id)
+                    updateUser(user.id, inputName.value, inputName2.value, inputName3.value);
+                }
+
+                nameCol.appendChild(inputName);
+                barcodeCol.appendChild(inputName2);
+                typeCol.appendChild(inputName3);
+                updateCol.appendChild(btn);
+                deleteCol.appendChild(btn2);
+                userTable.appendChild(row);
+            })
+        }
+
+        
+
+        function deleteUser(id) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open('DELETE', base_url + "/users/" + id);
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                getAllUsers();
+            });
+
+
+        }
+
+        function updateUser(id, name, barcode, type) {
+            let update_user = {
+                'name': name,
+                'barcode': barcode,
+                'memberType': type,
+            };
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open('PUT', base_url + "/users/" + id);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send(JSON.stringify(update_user));
+            xhttp.addEventListener('load', function() {
+            });
+
+        }
+
+        function searchUsers() {
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open('GET', base_url + "/search?type=user&name=" + document.getElementById('searchName').value);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                console.log(this.response)
+                updateUserTable(JSON.parse(this.response));
+            });
+        }
+
+        function searchBarcodes() {
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open('GET', base_url + "/search?type=user&barcode=" + document.getElementById('searchBarcode').value);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                console.log(this.response)
+                updateUserTable(JSON.parse(this.response));
+            });
+        }
+
+        getAllUsers();
+
+//LOANS
+
+//**GET /:userID/loans**
+//POST http://127.0.0.1/users/1/loans
+
+
+
+
+
+
+
+//**POST /:userID/loans/:bookID**
+
+//POST http://127.0.0.1/users/1/loans/2
+//{"dueDate": "2018-12-31"}
+
+
+    </script>
+</body>
+
+</html>
