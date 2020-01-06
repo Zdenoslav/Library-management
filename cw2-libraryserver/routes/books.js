@@ -4,9 +4,10 @@ const router = express.Router();
 const db = require("../data");
 const ret = require("../lib/return");
 
+//server modified
 router.get("/", function(req, res) {
     if (req.query.allEntities == "true") {
-        db.Book.findAll({ include: [db.Author] }).then(function(books) {
+        db.Book.findAll({ include: [db.Author, db.Loan] }).then(function(books) {
             ret.json(books, res);
         });
     } else {

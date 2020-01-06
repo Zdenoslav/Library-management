@@ -53,6 +53,8 @@ const Loan = sequelize.define("Loan", {
 User.hasMany(Loan, { as: "Loans" });
 // A Book can be on one Loan at a time
 Book.hasOne(Loan);
+//modififed add functrinoalak
+Loan.belongsTo(Book);
 
 //  SYNC SCHEMA
 const initialiseDatabase = function(wipeAndClear, repopulate) {

@@ -21,7 +21,11 @@ router.get("/:userID", function(req, res) {
 });
 
 router.get("/:userID/loans", function(req, res) {
-    db.Loan.findAll({ where: { userId: req.params.userID } }).then(function(loans) {
+    db.Loan.findAll({
+        where: { userId: req.params.userID },
+        include: [db.Book],
+    }).then(function(loans) {
+
         ret.json(loans, res);
     });
 });

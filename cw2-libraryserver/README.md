@@ -18,7 +18,7 @@ node initialise_database.js
 
 This will create a `library.sqlite` file inside the `data/` directory and pre-populate it with some sample data.
 
-**CAUTION!** Running this command will remove any data already stored in the database `data/library.sqlite`. It should be used with caution, only when you want to reset the Database to its initial state.
+**CAUTION!** Running this commandwil remove any data already stored in the database `data/library.sqlite`. It should be used with caution, only when you want to reset the Database to its initial state.
 
 ## Running the Server
 

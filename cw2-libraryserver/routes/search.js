@@ -20,6 +20,7 @@ function getSearchParams(queryParams, modelFields) {
     return searchParams;
 }
 
+//server modified include models
 function findAll(model, params, res, includedModels) {
     model.findAll({
         where: params,
