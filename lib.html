@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
+    <script src="./shared.js" charset="utf-8"></script>
     <title>Library</title>
 </head>
 
@@ -48,8 +49,6 @@
     </table>
 
     <script>
-        // the URI for our local node Library Server
-        const base_url = "http://127.0.0.1:3000";
 
         let libraryForm = document.getElementById('libraryForm');
         libraryForm.addEventListener('submit', libraryFormSubmit);
@@ -73,20 +72,11 @@
             adding.setRequestHeader("Content-Type", "application/json")
             adding.send(JSON.stringify(new_user));
             adding.addEventListener('load', function() {
-                getAllUsers();
+                getAllUsers(updateUserTable);
                 console.log('done');
             });
         }
-
-        function getAllUsers() {
-            var xhttp = new XMLHttpRequest();
-            xhttp.open('GET', base_url + "/users");
-            xhttp.send();
-            xhttp.addEventListener('load', function() {
-                updateUserTable(JSON.parse(this.response))
-            });
-        }
-
+        
         function updateUserTable(users) {
             var userTable = document.getElementById('book-list');
             userTable.innerHTML = "";
@@ -137,14 +127,14 @@
             })
         }
 
-        
+
 
         function deleteUser(id) {
             var xhttp = new XMLHttpRequest();
             xhttp.open('DELETE', base_url + "/users/" + id);
             xhttp.send();
             xhttp.addEventListener('load', function() {
-                getAllUsers();
+                getAllUsers(updateUserTable);
             });
 
 
@@ -190,7 +180,7 @@
             });
         }
 
-        getAllUsers();
+        getAllUsers(updateUserTable);
 
 //LOANS
 

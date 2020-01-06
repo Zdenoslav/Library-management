@@ -4,35 +4,209 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
+    <script src="./shared.js" charset="utf-8"></script>
     <title>Loans</title>
 </head>
-<h1 class="display-4 text-center">LOANS</h1>
 
 <body>
-    <form class="" action="index.html" method="post">
-        <input id='loan' type="text" name="" value="">
+    <h1 class="display-4 text-center">LOANS</h1>
+    <form id="loanForm" name="loanForm">
+
+        <select id="books">
+        </select>
+
+        <select id="users">
+        </select>
+
+        Due Date: <input id="date" type="date" name="bday">
+        <button type="submit">SUBMIT</button>
     </form>
 
+    <select id="loanUsers" onchange="getLoans(this)"></select>
+    <table class="table table-striped mt-5" id='loansTable'>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>ISBN</th>
+                <th>Due date</th>
+            </tr>
+        </thead>
+        <tbody id="loans-list"></tbody>
+    </table>
+
+    <select id="usersLoan" onchange="getUserByLoan(this)"></select>
+    <table class="table table-striped mt-5" id='loansTable'>
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody id="user-list"></tbody>
+    </table>
+
     <script>
-        function LoanSubmit() {
+        const loanForm = document.getElementById('loanForm');
+        loanForm.addEventListener('submit', loanFormSubmit);
+
+        function updateBooksSelect(books) {
+            const booksSelect = document.getElementById('books');
+            booksSelect.innerHTML = "";
+
+            books.forEach(function(book) {
+
+                if (!book.Loan) {
+                    const bookOption = document.createElement('option');
+                    bookOption.value = book.id;
+                    bookOption.innerHTML = book.title;
+                    booksSelect.appendChild(bookOption);
+                }
+
+            })
+        }
+
+        function updateLoanSearchSelect(books) {
+            const booksSelect = document.getElementById('books');
+            booksSelect.innerHTML = "";
+
+            books.forEach(function(book) {
+
+                if (!book.Loan) {
+                    const bookOption = document.createElement('option');
+                    bookOption.value = book.id;
+                    bookOption.innerHTML = book.title;
+                    booksSelect.appendChild(bookOption);
+                }
+
+            });
+        }
+
+        function populateBooksSelects(books) {
+            updateBooksSelect(books);
+            updateLoanSearchSelect(books);
+        }
+
+        function loanFormSubmit(e) {
             e.preventDefault();
-            const loan = document.getElementById('loan').value;
+            console.log(JSON.stringify(e))
 
+            const bookId = document.getElementById('books').value;
+            const userId = document.getElementById('users').value;
+            const date = document.getElementById('date').value;
+            console.log(date);
 
-        const new_loan = {
-            dueDate:
+            const new_loan = {
+                dueDate: date,
+            };
+
+            const addLoan = new XMLHttpRequest();
+
+            addLoan.open('POST', base_url + '/users/' + userId + '/loans/' + bookId);
+            addLoan.setRequestHeader("Content-Type", "application/json");
+            addLoan.send(JSON.stringify(new_loan));
+            addLoan.addEventListener('load', function() {
+                getAllBooks(updateBooksSelect)
+                console.log(this.response);
+            })
         };
 
-        const addBook = new XMLHttpRequest();
 
-        addBook.open('POST', base_url + '/books');
-        addBook.setRequestHeader("Content-Type", "application/json");
-        addBook.send(JSON.stringify(new_book));
-        addBook.addEventListener('load', function() {
-                    console.log(this.response);
+        function updateUserProvideLoanSelect(users) {
+            const userSelect = document.getElementById('users');
 
+            users.forEach(function(user) {
+                const userOption = document.createElement('option');
+                userOption.value = user.id;
+                userOption.innerHTML = user.name;
+                userSelect.appendChild(userOption);
+            });
         }
-        
+
+        function updateUserLoanSearchSelect(users) {
+            const userSelect = document.getElementById('loanUsers');
+
+            users.forEach(function(user) {
+                const userOption = document.createElement('option');
+                userOption.value = user.id;
+                userOption.innerHTML = user.name;
+                userSelect.appendChild(userOption);
+            });
+        }
+
+        function updateBookLoanSearchSelect(users) {
+            const userSelect = document.getElementById('usersLoan');
+
+            users.forEach(function(user) {
+                const userOption = document.createElement('option');
+                userOption.value = user.id;
+                userOption.innerHTML = user.name;
+                userSelect.appendChild(userOption);
+            });
+        }
+
+        function populateUserSelects(users) {
+            updateUserProvideLoanSelect(users);
+            updateUserLoanSearchSelect(users);
+            getLoans();
+            getUserByLoan()
+        }
+
+        function updateLoansTable(loans) {
+            const loansTable = document.getElementById('loans-list');
+            loansTable.innerHTML = "";
+            loans.forEach(function(loan) {
+
+                const row = loansTable.insertRow();
+                const titleCol = row.insertCell(0)
+                const isbnCol = row.insertCell(1)
+                const dueDateCol = row.insertCell(2)
+
+                const inputName = document.createElement('INPUT');
+                inputName.setAttribute("type", "text");
+                inputName.value = loan.Book.title;
+
+                const inputName2 = document.createElement('INPUT');
+                inputName2.setAttribute("type", "text");
+                inputName2.value = loan.Book.isbn;
+
+                const inputName3 = document.createElement('INPUT');
+                inputName3.setAttribute("type", "text");
+                inputName3.value = loan.dueDate;
+
+                titleCol.appendChild(inputName);
+                isbnCol.appendChild(inputName2);
+                dueDateCol.appendChild(inputName3);
+                loansTable.appendChild(row);
+            });
+        }
+
+
+//http://127.0.0.1/users/1/loans
+        function getLoans() {
+            const userId = document.getElementById('loanUsers').value;
+            const xhttp = new XMLHttpRequest();
+            xhttp.open('GET', base_url + "/users/" + userId + "/loans");
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                if (this.response) {
+                    updateLoansTable(JSON.parse(this.response));
+                }
+            });
+        }
+//http://127.0.0.1/loans/1
+        function getUserByLoan() {
+            const userId = document.getElementById('usersLoan').value;
+            const xhttp = new XMLHttpRequest();
+            xhttp.open('GET', base_url + "/books");
+            xhttp.send();
+            xhttp.addEventListener('load', function() {
+                if (this.response) {
+                    updateLoansTable(JSON.parse(this.response));
+                }
+            });
+        }
+
+        getAllBooks(populateBooksSelects);
+        getAllUsers(populateUserSelects);
     </script>
 </body>
 

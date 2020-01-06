@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
+    <script src="./shared.js" charset="utf-8"></script>
     <title>Books</title>
 </head>
 
@@ -51,9 +52,6 @@
     </table>
 
     <script>
-        // the URI for our local node Library Server
-        const base_url = "http://127.0.0.1:3000";
-
         const libraryForm = document.getElementById('libraryForm');
         libraryForm.addEventListener('submit', libraryFormSubmit);
 
@@ -88,19 +86,10 @@
                 addAuthor.setRequestHeader("Content-Type", "application/json");
                 addAuthor.send(JSON.stringify(new_author));
                 addAuthor.addEventListener('load', function() {
-                    getAllBooks();
+                    getAllBooks(updateBookTable);
                 });
             });
 
-        }
-
-        function getAllBooks() {
-            const xhttp = new XMLHttpRequest();
-            xhttp.open('GET', base_url + "/books" + '?allEntities=true');
-            xhttp.send();
-            xhttp.addEventListener('load', function() {
-                updateBookTable(JSON.parse(this.response))
-            });
         }
 
         function updateBookTable(books) {
@@ -163,7 +152,7 @@
             xhttp.open('DELETE', base_url + "/books/" + id);
             xhttp.send();
             xhttp.addEventListener('load', function() {
-                getAllBooks();
+                getAllBooks(updateBookTable);
             });
         }
 
@@ -231,7 +220,8 @@
             });
         }
 
-        getAllBooks();
+        getAllBooks(updateBookTable);
+
     </script>
 </body>
 
