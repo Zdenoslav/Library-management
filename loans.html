@@ -39,6 +39,7 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Member type</th>
             </tr>
         </thead>
         <tbody id="user-list"></tbody>
@@ -53,30 +54,26 @@
             booksSelect.innerHTML = "";
 
             books.forEach(function(book) {
-
                 if (!book.Loan) {
                     const bookOption = document.createElement('option');
                     bookOption.value = book.id;
                     bookOption.innerHTML = book.title;
                     booksSelect.appendChild(bookOption);
                 }
-
-            })
+            });
         }
 
         function updateLoanSearchSelect(books) {
-            const booksSelect = document.getElementById('books');
+            const booksSelect = document.getElementById('usersLoan');
             booksSelect.innerHTML = "";
 
             books.forEach(function(book) {
-
-                if (!book.Loan) {
+                if (book.Loan) {
                     const bookOption = document.createElement('option');
                     bookOption.value = book.id;
                     bookOption.innerHTML = book.title;
                     booksSelect.appendChild(bookOption);
                 }
-
             });
         }
 
@@ -87,7 +84,6 @@
 
         function loanFormSubmit(e) {
             e.preventDefault();
-            console.log(JSON.stringify(e))
 
             const bookId = document.getElementById('books').value;
             const userId = document.getElementById('users').value;
@@ -106,7 +102,7 @@
             addLoan.addEventListener('load', function() {
                 getAllBooks(updateBooksSelect)
                 console.log(this.response);
-            })
+            });
         };
 
 
@@ -147,7 +143,7 @@
             updateUserProvideLoanSelect(users);
             updateUserLoanSearchSelect(users);
             getLoans();
-            getUserByLoan()
+            getUserByLoan();
         }
 
         function updateLoansTable(loans) {
@@ -170,7 +166,7 @@
 
                 const inputName3 = document.createElement('INPUT');
                 inputName3.setAttribute("type", "text");
-                inputName3.value = loan.dueDate;
+                inputName3.value = loan.dueDate.slice(0, 10);
 
                 titleCol.appendChild(inputName);
                 isbnCol.appendChild(inputName2);
@@ -180,6 +176,7 @@
         }
 
 
+//http://127.0.0.1/users/1/loans
         function getLoans() {
             const userId = document.getElementById('loanUsers').value;
             const xhttp = new XMLHttpRequest();
@@ -192,14 +189,42 @@
             });
         }
 
+        function updateUserLoanTable(user) {
+            console.log({user});
+            const userTable = document.getElementById('user-list');
+            userTable.innerHTML = "";
+
+            const row = userTable.insertRow();
+                const nameCol = row.insertCell(0)
+                const memberTypeCol = row.insertCell(1)
+
+                const inputName = document.createElement('INPUT');
+                inputName.setAttribute("type", "text");
+                inputName.value = user.name;
+
+                const inputName2 = document.createElement('INPUT');
+                inputName2.setAttribute("type", "text");
+                inputName2.value = user.memberType;
+
+                nameCol.appendChild(inputName);
+                memberTypeCol.appendChild(inputName2);
+                userTable.appendChild(row);
+        }
+
+//http://127.0.0.1/loans/1
         function getUserByLoan() {
-            const userId = document.getElementById('usersLoan').value;
+            const bookId = document.getElementById('usersLoan').value;
             const xhttp = new XMLHttpRequest();
-            xhttp.open('GET', base_url + "/books");
+            xhttp.open('GET', base_url + "/books/" + bookId + "?allEntities=true");
             xhttp.send();
             xhttp.addEventListener('load', function() {
+                console.log(this.response)
                 if (this.response) {
-                    updateLoansTable(JSON.parse(this.response));
+                    const parsedResponse = JSON.parse(this.response);
+                    console.log({parsedResponse})
+                    if(parsedResponse.Loan) {
+                        updateUserLoanTable(parsedResponse.Loan.User);
+                    }
                 }
             });
         }
