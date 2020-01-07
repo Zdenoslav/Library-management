@@ -16,10 +16,18 @@ router.get("/", function(req, res) {
         });
     }
 });
-
+//the server modified to allow the search of user by the loans(include: db.Loan, include:db.User)
 router.get("/:bookID", function(req, res) {
     if (req.query.allEntities == "true") {
-        db.Book.findByPk(req.params.bookID, { include: [db.Author] }).then(function(book) {
+        db.Book.findByPk(req.params.bookID, {
+            include: [
+                db.Author,
+                {
+                    model: db.Loan,
+                    include: db.User,
+                },
+            ],
+        }).then(function(book) {
             if (book) {
                 ret.json(book, res);
             } else {

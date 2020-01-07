@@ -51,6 +51,9 @@ const Loan = sequelize.define("Loan", {
 
 // A User can have many Loans
 User.hasMany(Loan, { as: "Loans" });
+//The server modified to allow the functionality to search the users by the loans
+// A Loan can be assigned to one User
+Loan.belongsTo(User);
 // A Book can be on one Loan at a time
 Book.hasOne(Loan);
 //modififed add functrinoalak
