@@ -1,0 +1,180 @@
+@import url(https://fonts.googleapis.com/css?family=Quattrocento&display=swap);
+@import url(https://fonts.googleapis.com/css?family=Quattrocento+Sans&display=swap);
+
+body {
+    background-color: #A993FF;
+}
+
+.topnav {
+    font-size: 25px;
+    font-family: 'Quattrocento';
+    text-align: right;
+    padding: 10px;
+}
+
+.topnav a {
+    padding: 10px;
+    color: black;
+    font-family: 'Quattrocento';
+    text-decoration: underline;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 80px;
+  text-align: center;
+
+
+}
+
+
+.form-group {
+    font-size: 20px;
+    font-family: 'Quattrocento';
+}
+
+label {
+    font-size: 1rem;
+    font-family: 'Quattrocento';
+    font-weight: bold;
+    font-weight: bold;
+}
+
+select {
+    font-size: 15px;
+}
+
+.btn {
+    background-color: #791B99;
+    color: black;
+    font-size: 30px;
+    border-radius: 7rem;
+}
+
+h1 {
+    font-size: 50px;
+    font-family: : 'Quattrocento';
+}
+
+.table {
+    font-size: 1rem;
+    background-color: #9A55B2;
+    border-radius: 30px;
+}
+
+tr {
+    font-family: 'Quattrocento';
+}
+
+tbody {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+#welcome {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: #9A55B2;
+}
+
+a {
+    color: #791B99;
+}
+
+#date {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+#dueDate {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px 5px 5px 5px;
+}
+
+#users {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px 5px 5px 5px;
+}
+
+#books {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px 5px 5px 5px;
+}
+
+#loanUsers {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px 5px 5px 5px;
+}
+
+#usersLoan {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px 5px 5px 5px;
+}
+#section1 {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: #9A55B2;
+}
+
+#section2 {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: #9A55B2;
+}
+
+input {
+    font-family: none;
+    margin: 15px;
+}
+
+button {
+    margin: 15px;
+}
+
+@media screen and (max-width: 1100px) {
+  .column {
+    width: 100%;
+  }
+}

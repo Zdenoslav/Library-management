@@ -3,54 +3,66 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Quattrocento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quattrocento+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="override.css">
     <script src="./shared.js" charset="utf-8"></script>
     <title>Books</title>
 </head>
 
 <body>
-    <h1 class="display-4 text-center">BOOKS</h1>
+    <div class="topnav">
+        <a href="users.html">USERS</a>
+        <a href="loans.html">LOANS</a>
+        <a class="index.html" href="index.html">HOME</a>
+    </div>
+    <h1 class="display-4 text-center" style="font-family:'Quattrocento'">BOOKS</h1>
     <div class="container">
         <form id="libraryForm" action="index.html" method="post">
             <div class="form-group">
                 <label for="name">Title</label>
-                <input type="text" id="title" class="form-control">
+                <input type="text" id="title" class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="author">ISBN</label>
-                <input type="text" id="isbn" class="form-control">
+                <input type="text" id="isbn" class="form-control" maxlength="13" required>
             </div>
             <div class="form-group">
                 <label for="isbn">Author</label>
-                <input type="text" id="name" class="form-control">
+                <input type="text" id="name" class="form-control" required>
             </div>
 
+            <input type="submit" name="SUBMIT" value="Add Book" style="font-family: 'Quattrocento'" class="btn btn-lg btn-block mb-5 mt-5">
 
-            <input type="submit" value="Add Book" class="btn btn-primary btn-block">
+            <div class="" id='section1'>
+                <div class="">
+                    <label for="">SEARCH BY TITLE</label>
+                    <input type="text" id='searchTitle' placeholder="Search for title" class="input mt-4" oninput="searchTitles()">
+                </div>
+                <div class="">
+                    <label for="">SEARCH BY AUTHOR</label>
+                    <input type="text" id='searchAuthor' placeholder="Search for author" class="input mt-4" oninput="searchAuthors()">
+                </div>
+            </div>
 
-            <div class="">
-                <label for="">SEARCH BY TITLE</label>
-                <input type="text" id='searchTitle' placeholder="Search for title" class="input mt-4" oninput="searchTitles()">
-            </div>
-            <div class="">
-                <label for="">SEARCH BY AUTHOR</label>
-                <input type="text" id='searchAuthor' placeholder="Search for author" class="input mt-4" oninput="searchAuthors()">
-            </div>
         </form>
     </div>
-    <table class="table table-striped mt-5" id='myTable'>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>ISBN</th>
-                <th>Author</th>
-                <th>UPDATE</th>
-                <th>DELETE</th>
-            </tr>
-        </thead>
-        <tbody id="book-list"></tbody>
-    </table>
-
+    <div class="">
+        <table class="table table-striped mt-5" id='myTable'>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>ISBN</th>
+                    <th>Author</th>
+                    <th>UPDATE</th>
+                    <th>DELETE</th>
+                </tr>
+            </thead>
+            <tbody id="book-list"></tbody>
+        </table>
+    </div>
     <script>
         const libraryForm = document.getElementById('libraryForm');
         libraryForm.addEventListener('submit', libraryFormSubmit);
@@ -123,7 +135,7 @@
 
                 const inputName3 = document.createElement('INPUT');
                 inputName3.setAttribute("type", "text");
-                if (book.Authors&&book.Authors.length>0) {
+                if (book.Authors && book.Authors.length > 0) {
                     inputName3.value = book.Authors[0].name;
                 } else {
                     inputName3.value = "";
@@ -196,7 +208,7 @@
             xhttp.addEventListener('load', function() {
                 console.log(this.response)
                 const parsedAuthors = JSON.parse(this.response);
-                if(parsedAuthors && parsedAuthors.length) {
+                if (parsedAuthors && parsedAuthors.length) {
                     const books = parsedAuthors.reduce((allBooks, author) => {
                         const booksByAuthor = author.Books.reduce((acc, book) => {
                             acc.push({
@@ -221,7 +233,6 @@
         }
 
         getAllBooks(updateBookTable);
-
     </script>
 </body>
 

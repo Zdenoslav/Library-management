@@ -3,27 +3,40 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Quattrocento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quattrocento+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="override.css">
     <script src="./shared.js" charset="utf-8"></script>
     <title>Loans</title>
 </head>
 
 <body>
-    <h1 class="display-4 text-center">LOANS</h1>
+    <div class="topnav">
+        <a href="users.html">USERS</a>
+        <a href="books.html">BOOKS</a>
+        <a class="index.html" href="index.html">HOME</a>
+    </div>
+
+    <h1 class="display-4 text-center" style="font-size: 70px; font-family: 'Quattrocento'">LOANS</h1>
     <form id="loanForm" name="loanForm">
+        <div class="" id="date">
+            <select id="books">
+            </select>
 
-        <select id="books">
-        </select>
+            <select id="users">
+            </select>
 
-        <select id="users">
-        </select>
+            Due Date: <input id="dueDate" type="date" name="bday" required>
+        </div>
 
-        Due Date: <input id="date" type="date" name="bday">
-        <button type="submit">SUBMIT</button>
+
+        <input type="submit" name="SUBMIT" value="CREATE LOAN" style="font-family: 'Quattrocento'" class="btn btn-lg btn-block mb-5 mt-5">
     </form>
 
     <select id="loanUsers" onchange="getLoans(this)"></select>
-    <table class="table table-striped mt-5" id='loansTable'>
+    <table style="background-color:#9A55B2;" class="table table-striped" id='loansTable'>
         <thead>
             <tr>
                 <th>Title</th>
@@ -35,7 +48,7 @@
     </table>
 
     <select id="usersLoan" onchange="getUserByLoan(this)"></select>
-    <table class="table table-striped mt-5" id='loansTable'>
+    <table style="background-color:#9A55B2;" class="table table-striped mt-5" id='loansTable'>
         <thead>
             <tr>
                 <th>Name</th>
@@ -87,7 +100,7 @@
 
             const bookId = document.getElementById('books').value;
             const userId = document.getElementById('users').value;
-            const date = document.getElementById('date').value;
+            const date = document.getElementById('dueDate').value;
             console.log(date);
 
             const new_loan = {
@@ -100,10 +113,17 @@
             addLoan.setRequestHeader("Content-Type", "application/json");
             addLoan.send(JSON.stringify(new_loan));
             addLoan.addEventListener('load', function() {
-                getAllBooks(updateBooksSelect)
+
+                getLoans();
+                getAllBooks(populateBooksSelects);
+                getAllBooks(updateBooksSelect);
                 console.log(this.response);
             });
         };
+
+        function AddLoan () {
+            getLoans();
+        }
 
 
         function updateUserProvideLoanSelect(users) {
@@ -126,6 +146,7 @@
                 userOption.innerHTML = user.name;
                 userSelect.appendChild(userOption);
             });
+            getLoans();
         }
 
         function updateBookLoanSearchSelect(users) {
@@ -137,6 +158,7 @@
                 userOption.innerHTML = user.name;
                 userSelect.appendChild(userOption);
             });
+
         }
 
         function populateUserSelects(users) {
@@ -166,7 +188,7 @@
 
                 const inputName3 = document.createElement('INPUT');
                 inputName3.setAttribute("type", "text");
-                inputName3.value = loan.dueDate.slice(0, 10);
+                inputName3.value = loan.dueDate.slice (0,10);
 
                 titleCol.appendChild(inputName);
                 isbnCol.appendChild(inputName2);
@@ -176,7 +198,7 @@
         }
 
 
-//http://127.0.0.1/users/1/loans
+        //http://127.0.0.1/users/1/loans
         function getLoans() {
             const userId = document.getElementById('loanUsers').value;
             const xhttp = new XMLHttpRequest();
@@ -190,28 +212,29 @@
         }
 
         function updateUserLoanTable(user) {
-            console.log({user});
+            console.log({
+                user
+            });
             const userTable = document.getElementById('user-list');
             userTable.innerHTML = "";
 
             const row = userTable.insertRow();
-                const nameCol = row.insertCell(0)
-                const memberTypeCol = row.insertCell(1)
+            const nameCol = row.insertCell(0)
+            const memberTypeCol = row.insertCell(1)
 
-                const inputName = document.createElement('INPUT');
-                inputName.setAttribute("type", "text");
-                inputName.value = user.name;
+            const inputName = document.createElement('INPUT');
+            inputName.setAttribute("type", "text");
+            inputName.value = user.name;
 
-                const inputName2 = document.createElement('INPUT');
-                inputName2.setAttribute("type", "text");
-                inputName2.value = user.memberType;
+            const inputName2 = document.createElement('INPUT');
+            inputName2.setAttribute("type", "text");
+            inputName2.value = user.memberType;
 
-                nameCol.appendChild(inputName);
-                memberTypeCol.appendChild(inputName2);
-                userTable.appendChild(row);
+            nameCol.appendChild(inputName);
+            memberTypeCol.appendChild(inputName2);
+            userTable.appendChild(row);
         }
 
-//http://127.0.0.1/loans/1
         function getUserByLoan() {
             const bookId = document.getElementById('usersLoan').value;
             const xhttp = new XMLHttpRequest();
@@ -221,8 +244,10 @@
                 console.log(this.response)
                 if (this.response) {
                     const parsedResponse = JSON.parse(this.response);
-                    console.log({parsedResponse})
-                    if(parsedResponse.Loan) {
+                    console.log({
+                        parsedResponse
+                    })
+                    if (parsedResponse.Loan) {
                         updateUserLoanTable(parsedResponse.Loan.User);
                     }
                 }
