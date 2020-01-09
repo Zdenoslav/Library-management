@@ -4,7 +4,7 @@ const router = express.Router();
 const db = require("../data");
 const ret = require("../lib/return");
 
-//server modified
+//server modified to include Authors and LOANS
 router.get("/", function(req, res) {
     if (req.query.allEntities == "true") {
         db.Book.findAll({ include: [db.Author, db.Loan] }).then(function(books) {
@@ -16,6 +16,7 @@ router.get("/", function(req, res) {
         });
     }
 });
+
 //the server modified to allow the search of user by the loans(include: db.Loan, include:db.User)
 router.get("/:bookID", function(req, res) {
     if (req.query.allEntities == "true") {
