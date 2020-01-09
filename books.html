@@ -2,47 +2,51 @@
 <html lang="en" dir="ltr">
 
 <head>
+    <!-- linking all the necessary files for the proper styling and branding of the webpage -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css?family=Quattrocento&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Quattrocento+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="override.css">
-    <script src="./shared.js" charset="utf-8"></script>
+    <script src="./shared.js"></script>
     <title>Books</title>
 </head>
 
 <body>
+
     <div class="topnav">
         <a href="users.html">USERS</a>
         <a href="loans.html">LOANS</a>
         <a class="index.html" href="index.html">HOME</a>
     </div>
+
     <h1 class="display-4 text-center" style="font-family:'Quattrocento'">BOOKS</h1>
     <div class="container">
         <form id="libraryForm" action="index.html" method="post">
             <div class="form-group">
                 <label for="name">Title</label>
-                <input type="text" id="title" class="form-control" required>
+                <input type="text" id="title" placeholder="Meditations" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="author">ISBN</label>
-                <input type="text" id="isbn" class="form-control" maxlength="13" required>
+                <label for="isbn">ISBN</label>
+                <!--using maxlength to check the ISBN is not longer than 13 digits which is a standard length for ISBN*-->
+                <input type="text" id="isbn" placeholder="1234567890111" class="form-control" maxlength="13" required>
             </div>
             <div class="form-group">
-                <label for="isbn">Author</label>
-                <input type="text" id="name" class="form-control" required>
+                <label for="name">Author</label>
+                <input type="text" id="name" placeholder="Marcus Aurelius" class="form-control" required>
             </div>
-
             <input type="submit" name="SUBMIT" value="Add Book" style="font-family: 'Quattrocento'" class="btn btn-lg btn-block mb-5 mt-5">
 
+            <!-- adding search section for better user interactivity -->
             <div class="" id='section1'>
                 <div class="">
-                    <label for="">SEARCH BY TITLE</label>
+                    <label>SEARCH BY TITLE</label>
                     <input type="text" id='searchTitle' placeholder="Search for title" class="input mt-4" oninput="searchTitles()">
                 </div>
                 <div class="">
-                    <label for="">SEARCH BY AUTHOR</label>
+                    <label>SEARCH BY AUTHOR</label>
                     <input type="text" id='searchAuthor' placeholder="Search for author" class="input mt-4" oninput="searchAuthors()">
                 </div>
             </div>
@@ -74,24 +78,24 @@
             const isbn = document.getElementById('isbn').value;
             const name = document.getElementById('name').value;
 
-
+            //creating a new object for the book
             const new_book = {
                 title: title,
                 isbn: isbn,
             };
 
             const addBook = new XMLHttpRequest();
-
+            // making a POST request to the books endpoint
             addBook.open('POST', base_url + '/books');
             addBook.setRequestHeader("Content-Type", "application/json");
             addBook.send(JSON.stringify(new_book));
             addBook.addEventListener('load', function() {
                 console.log(this.response);
-
+                //creating an object for the author
                 const new_author = {
                     name: name,
                 };
-
+                //making a POST request to the authors endpoint and calling the getAllBooks function to updateBookTable accordingly
                 const addAuthor = new XMLHttpRequest();
 
                 addAuthor.open('POST', base_url + '/books/' + JSON.parse(this.response).id + '/authors');
@@ -104,10 +108,14 @@
 
         }
 
+        //a function that updates the Table and populates it with the new data form the librarian
         function updateBookTable(books) {
             const bookTable = document.getElementById('book-list');
             bookTable.innerHTML = "";
+            //looping through all the books
             books.forEach(function(book) {
+
+                //creating a table to show all data needed for the librarian
 
                 const row = bookTable.insertRow();
                 const titleCol = row.insertCell(0)
@@ -122,8 +130,8 @@
                 btn2.onclick = function() {
                     deleteBook(book.id);
                 }
-                // Create a <button> element
-                btn2.innerHTML = "DELETE"; // Insert text
+                // Creating a <button> element
+                btn2.innerHTML = "DELETE"; // Inserting text
 
                 const inputName = document.createElement('INPUT');
                 inputName.setAttribute("type", "text");
@@ -142,7 +150,7 @@
                 };
 
 
-                const btn = document.createElement("BUTTON"); // Create a <button> element
+                const btn = document.createElement("BUTTON");
                 btn.innerHTML = "UPDATE";
                 btn.onclick = function() {
                     console.log(inputName.value)
@@ -159,6 +167,7 @@
             });
         }
 
+        //a function to delete a book after the librarian uses the button
         function deleteBook(id) {
             const xhttp = new XMLHttpRequest();
             xhttp.open('DELETE', base_url + "/books/" + id);
@@ -168,6 +177,7 @@
             });
         }
 
+        //a function to update a book after the librarian uses the button and the PUT request is sent
         function updateBook(id, title, isbn) {
             const update_book = {
                 title: title,
@@ -182,11 +192,9 @@
 
         }
 
-
-
-
         //SEARCH
 
+        //a function to search for the Titles and sending the GET request
         function searchTitles() {
 
             var xhttp = new XMLHttpRequest();
@@ -199,6 +207,7 @@
             });
         }
 
+        // a function to search for the authors and sending the GET request
         function searchAuthors() {
 
             var xhttp = new XMLHttpRequest();
@@ -207,6 +216,7 @@
             xhttp.send();
             xhttp.addEventListener('load', function() {
                 console.log(this.response)
+                //getting the books into the appropriate format so it can be taken by the updateBookTable function
                 const parsedAuthors = JSON.parse(this.response);
                 if (parsedAuthors && parsedAuthors.length) {
                     const books = parsedAuthors.reduce((allBooks, author) => {

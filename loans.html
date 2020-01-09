@@ -8,11 +8,12 @@
     <link href="https://fonts.googleapis.com/css?family=Quattrocento+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="override.css">
-    <script src="./shared.js" charset="utf-8"></script>
+    <script src="./shared.js"></script>
     <title>Loans</title>
 </head>
 
 <body>
+    <!-- adding a simple navbar for some better user experience -->
     <div class="topnav">
         <a href="users.html">USERS</a>
         <a href="books.html">BOOKS</a>
@@ -27,8 +28,7 @@
 
             <select id="users">
             </select>
-
-            Due Date: <input id="dueDate" type="date" name="bday" required>
+            DUE DATE: <input id="dueDate" type="date" name="bday" required>
         </div>
 
 
@@ -36,7 +36,8 @@
     </form>
 
     <select id="loanUsers" onchange="getLoans(this)"></select>
-    <table style="background-color:#9A55B2;" class="table table-striped" id='loansTable'>
+    <!-- creating a table where the librarian can see the data for the book he wants to loan -->
+    <table style="background-color:#9A55B2;" class="table table-striped mt-5" id='loansTable'>
         <thead>
             <tr>
                 <th>Title</th>
@@ -48,7 +49,7 @@
     </table>
 
     <select id="usersLoan" onchange="getUserByLoan(this)"></select>
-    <table style="background-color:#9A55B2;" class="table table-striped mt-5" id='loansTable'>
+    <table style="background-color:#9A55B2;" class="table table-striped mt-5">
         <thead>
             <tr>
                 <th>Name</th>
@@ -65,7 +66,7 @@
         function updateBooksSelect(books) {
             const booksSelect = document.getElementById('books');
             booksSelect.innerHTML = "";
-
+            //looping through the books
             books.forEach(function(book) {
                 if (!book.Loan) {
                     const bookOption = document.createElement('option');
@@ -102,7 +103,7 @@
             const userId = document.getElementById('users').value;
             const date = document.getElementById('dueDate').value;
             console.log(date);
-
+            // creating a new object for the dueDate and sending a POST request
             const new_loan = {
                 dueDate: date,
             };
@@ -120,11 +121,6 @@
                 console.log(this.response);
             });
         };
-
-        function AddLoan () {
-            getLoans();
-        }
-
 
         function updateUserProvideLoanSelect(users) {
             const userSelect = document.getElementById('users');
@@ -160,7 +156,7 @@
             });
 
         }
-
+        // one function that updates all the selects menus with new data
         function populateUserSelects(users) {
             updateUserProvideLoanSelect(users);
             updateUserLoanSearchSelect(users);
@@ -171,6 +167,7 @@
         function updateLoansTable(loans) {
             const loansTable = document.getElementById('loans-list');
             loansTable.innerHTML = "";
+            //looping through each loan
             loans.forEach(function(loan) {
 
                 const row = loansTable.insertRow();
@@ -188,7 +185,7 @@
 
                 const inputName3 = document.createElement('INPUT');
                 inputName3.setAttribute("type", "text");
-                inputName3.value = loan.dueDate.slice (0,10);
+                inputName3.value = loan.dueDate.slice(0, 10);
 
                 titleCol.appendChild(inputName);
                 isbnCol.appendChild(inputName2);
@@ -197,8 +194,6 @@
             });
         }
 
-
-        //http://127.0.0.1/users/1/loans
         function getLoans() {
             const userId = document.getElementById('loanUsers').value;
             const xhttp = new XMLHttpRequest();
@@ -210,6 +205,8 @@
                 }
             });
         }
+
+        // a function to display the user currently borrowing the book
 
         function updateUserLoanTable(user) {
             console.log({
@@ -254,6 +251,7 @@
             });
         }
 
+        //calling the functions to populate all the select menus with the new data
         getAllBooks(populateBooksSelects);
         getAllUsers(populateUserSelects);
     </script>

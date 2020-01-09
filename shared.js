@@ -1,6 +1,8 @@
 // the URI for our local node Library Server
 const base_url = "http://127.0.0.1:3000";
 
+//function to be called after the response is received
+
 function getAllBooks(callback) {
     const xhttp = new XMLHttpRequest();
     xhttp.open('GET', base_url + "/books" + '?allEntities=true');

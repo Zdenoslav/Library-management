@@ -8,11 +8,12 @@
     <link href="https://fonts.googleapis.com/css?family=Quattrocento+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="override.css">
-    <script src="./shared.js" charset="utf-8"></script>
+    <script src="./shared.js"></script>
     <title>Library</title>
 </head>
 
 <body>
+    <!-- a simple navbar to allow better user experiencse -->
     <div class="topnav">
         <a href="books.html">BOOKS</a>
         <a href="loans.html">LOANS</a>
@@ -24,24 +25,26 @@
         <form id="libraryForm" action="index.html" method="post">
             <div class="form-group">
                 <label for="name">Full Name</label>
-                <input type="text" id="name" class="form-control">
+                <input type="text" id="name" placeholder="John Smith" class="form-control">
             </div>
             <div class="form-group">
-                <label for="author">Barcode</label>
-                <input type="text" id="isbn" class="form-control">
+                <label for="isbn">Barcode</label>
+                <input type="text" id="isbn" placeholder="1234567890111" class="form-control" maxlength="13">
             </div>
             <div class="form-group">
-                <label for="isbn">Member Type</label>
-                <input type="text" id="member" class="form-control">
+                <label for="member">Member Type</label>
+                <input type="text" id="member" placeholder="Student/Staff" class="form-control">
             </div>
+
+            <!-- two search inputs to allow the librarian  better data manipulation -->
             <input type="submit" name="SUBMIT" value="ADD USER" style="font-family:'Quattrocento'" class="btn btn-lg btn-block mb-5 mt-5">
             <div class="" id="section2">
                 <div class="">
-                    <label for="">SEARCH</label>
+                    <label>SEARCH</label>
                     <input type="text" id='searchName' placeholder="Search for name" class="input mt-4" oninput="searchUsers()">
                 </div>
                 <div class="">
-                    <label for="">BARCODE</label>
+                    <label>BARCODE</label>
                     <input type="text" id='searchBarcode' placeholder="Search for barcode" class="input mt-4" oninput="searchBarcodes()">
                 </div>
             </div>
@@ -49,6 +52,8 @@
 
         </form>
     </div>
+
+    <!-- creating a table where our data will be displayed for the librarian -->
     <table class="table table-striped mt-5" id='myTable'>
         <thead>
             <tr>
@@ -72,7 +77,7 @@
             var name = document.getElementById('name').value;
             var isbn = document.getElementById('isbn').value;
             var type = document.getElementById('member').value;
-
+            //creating a new object for the user data
             let new_user = {
                 name: name,
                 barcode: isbn,
@@ -80,7 +85,7 @@
             };
 
             var adding = new XMLHttpRequest();
-
+            // sending a POST request afte the form is submitted
             adding.open('POST', base_url + '/users');
             adding.setRequestHeader("Content-Type", "application/json")
             adding.send(JSON.stringify(new_user));
@@ -96,6 +101,7 @@
             console.log({
                 users
             });
+            //looping through the users
             users.forEach(function(user) {
 
                 var row = userTable.insertRow();
@@ -144,8 +150,6 @@
             })
         }
 
-
-
         function deleteUser(id) {
             var xhttp = new XMLHttpRequest();
             xhttp.open('DELETE', base_url + "/users/" + id);
@@ -172,6 +176,8 @@
 
         }
 
+        //a function to allow the librarian to search for the users by the user's name and sending GET request
+
         function searchUsers() {
 
             var xhttp = new XMLHttpRequest();
@@ -183,6 +189,8 @@
                 updateUserTable(JSON.parse(this.response));
             });
         }
+
+        //a function to allow the librarian to search for the users by the user's barcode and sending GET request
 
         function searchBarcodes() {
 
@@ -196,8 +204,8 @@
             });
         }
 
+        //calling the function to update the user table
         getAllUsers(updateUserTable);
-
     </script>
 </body>
 
